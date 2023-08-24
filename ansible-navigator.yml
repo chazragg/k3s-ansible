@@ -1,0 +1,21 @@
+---
+ansible-navigator:
+  ansible:
+    config:
+      help: False
+  execution-environment:
+    image: registry.gitlab.com/chazragg-co/deployment/ansible-ee:main
+    volume-mounts:
+      - src: "~/.ssh"
+        dest: "~/.ssh"
+  playbook-artifact:
+    enable: False
+# vscode
+  editor:
+    command: code -g {filename}:{line_number}
+    console: false
+  images:
+    details:
+      - ansible_version
+      - python_version
+  mode: stdout
