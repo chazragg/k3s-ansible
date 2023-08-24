@@ -1,0 +1,24 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: longhorn
+  namespace: kube-system
+spec:
+  chart: longhorn
+  repo: https://charts.longhorn.io
+  targetNamespace: longhorn-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  valuesContent: |-
+    defaultSettings:
+      backupTarget: s3://longhorn@None/
+      backupTargetCredentialSecret: minio-secret
+      defaultReplicaCount: 3
+    ingress:
+      enabled: true
+      host: longhorn.chazragg.co.uk

@@ -12,11 +12,25 @@
   failed_when: false
   changed_when: false
 
-- name: Deploy vip manifest
-  include_tasks: vip.yml
+- name: Create manifests directory on first master
+  file:
+    path: /var/lib/rancher/k3s/server/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname == hostvars[groups['master'][0]]['ansible_hostname']
 
-- name: Deploy metallb manifest
-  include_tasks: metallb.yml
+- name: Copy all manifests over to First master
+  template:
+    src: "{{ item }}"
+    dest: /var/lib/rancher/k3s/server/manifests/{{ item | basename | regex_replace('\.j2$', '') }}
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_host == hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0])
+  with_fileglob:
+    - templates/manifests/*.j2
 
 - name: Init cluster inside the transient k3s-init service
   command:
@@ -53,7 +67,7 @@
 - name: Copy K3s service file
   register: k3s_service
   template:
-    src: "k3s.service.j2"
+    src: "service/k3s.service.j2"
     dest: "{{ systemd_dir }}/k3s.service"
     owner: root
     group: root
