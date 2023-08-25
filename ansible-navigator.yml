@@ -5,9 +5,9 @@ ansible-navigator:
       help: False
   execution-environment:
     image: registry.gitlab.com/chazragg-co/deployment/ansible-ee:main
-    volume-mounts:
-      - src: "~/.ssh"
-        dest: "~/.ssh"
+    environment-variables:
+      set:
+        ANSIBLE_K3S_LOG_DIR: ./logs
   playbook-artifact:
     enable: False
 # vscode
