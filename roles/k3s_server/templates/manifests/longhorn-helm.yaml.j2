@@ -22,10 +22,8 @@ spec:
     remediation:
       retries: 3
   valuesContent: |-
-    defaultSettings:
-      backupTarget: s3://longhorn@None/
-      backupTargetCredentialSecret: minio-secret
-      defaultReplicaCount: 3
+    csi:
+      kubeletRootDir: /var/lib/kubelet
     ingress:
       enabled: true
       host: longhorn.chazragg.co.uk
