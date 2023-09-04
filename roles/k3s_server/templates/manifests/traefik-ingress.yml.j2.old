@@ -1,0 +1,42 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    image:
+      name: traefik
+      repository: "traefik"
+      tag: v2.9.10
+    priorityClassName: system-cluster-critical
+    providers:
+      kubernetesIngress:
+        publishedService:
+          enabled: true
+    tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+    forwardedHeaders:
+      enabled: true
+      trustedIPs:
+        - 10.0.0.0/8
+    service:
+      spec:
+        loadBalancerIP: 192.168.0.180
+    certResolvers:
+      letsencrypt:
+        email: chazragg@gmail.com
+        storage: /etc/traefik/acme.json
+        dnsChallenge:
+            provider: cloudflare
+            # Used to make sure the dns challenge is propagated to the rights dns servers
+            resolvers:
+            - "1.1.1.1:53"
+            - "1.0.0.1:53"
